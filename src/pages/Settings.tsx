@@ -86,26 +86,25 @@ const Settings: React.FC = () => {
     }
   };
 
-  const handleChange = (field: keyof Settings) => (
-    event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
+  const handleInputChange = (field: keyof Settings) => (
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    let value: string | number | boolean;
-
-    if ('type' in event.target) {
-      // Handle HTMLInputElement events (text, number, checkbox)
-      value = event.target.type === 'checkbox'
-        ? (event.target as HTMLInputElement).checked
-        : event.target.type === 'number'
-        ? Number(event.target.value)
-        : event.target.value;
-    } else {
-      // Handle SelectChangeEvent
-      value = event.target.value;
-    }
+    const value = event.target.type === 'checkbox'
+      ? event.target.checked
+      : event.target.type === 'number'
+      ? Number(event.target.value)
+      : event.target.value;
 
     setSettings((prev) => ({
       ...prev,
       [field]: value,
+    }));
+  };
+
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setSettings((prev) => ({
+      ...prev,
+      modelId: event.target.value,
     }));
   };
 
@@ -139,7 +138,7 @@ const Settings: React.FC = () => {
           <TextField
             label="API Endpoint"
             value={settings.apiEndpoint}
-            onChange={handleChange('apiEndpoint')}
+            onChange={handleInputChange('apiEndpoint')}
             fullWidth
             helperText="The URL of your Bedrock Access Gateway API endpoint"
           />
@@ -147,7 +146,7 @@ const Settings: React.FC = () => {
             label="API Key"
             type="password"
             value={settings.apiKey}
-            onChange={handleChange('apiKey')}
+            onChange={handleInputChange('apiKey')}
             fullWidth
             helperText="Your API key for authentication"
           />
@@ -156,7 +155,7 @@ const Settings: React.FC = () => {
               <InputLabel>Model</InputLabel>
               <Select
                 value={settings.modelId}
-                onChange={handleChange('modelId')}
+                onChange={handleSelectChange}
                 label="Model"
                 disabled={loading}
               >
@@ -179,7 +178,7 @@ const Settings: React.FC = () => {
             label="Temperature"
             type="number"
             value={settings.temperature}
-            onChange={handleChange('temperature')}
+            onChange={handleInputChange('temperature')}
             fullWidth
             inputProps={{ min: 0, max: 1, step: 0.1 }}
             helperText="Controls randomness in the model's output (0.0 to 1.0)"
@@ -188,7 +187,7 @@ const Settings: React.FC = () => {
             label="Max Tokens"
             type="number"
             value={settings.maxTokens}
-            onChange={handleChange('maxTokens')}
+            onChange={handleInputChange('maxTokens')}
             fullWidth
             inputProps={{ min: 1, max: 4000 }}
             helperText="Maximum number of tokens to generate"
@@ -197,7 +196,7 @@ const Settings: React.FC = () => {
             control={
               <Switch
                 checked={settings.enableStreaming}
-                onChange={handleChange('enableStreaming')}
+                onChange={handleInputChange('enableStreaming')}
               />
             }
             label="Enable Streaming"
