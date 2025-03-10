@@ -14,6 +14,7 @@ import {
   FormControl,
   InputLabel,
   CircularProgress,
+  SelectChangeEvent,
 } from '@mui/material';
 import axios from 'axios';
 
@@ -86,10 +87,10 @@ const Settings: React.FC = () => {
   };
 
   const handleChange = (field: keyof Settings) => (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
   ) => {
     const value = event.target.type === 'checkbox'
-      ? event.target.checked
+      ? (event.target as HTMLInputElement).checked
       : event.target.type === 'number'
       ? Number(event.target.value)
       : event.target.value;
