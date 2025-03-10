@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - REACT_APP_API_ENDPOINT=http://bedrock-gateway:3001
+      - REACT_APP_API_KEY=${REACT_APP_API_KEY}
+      - REACT_APP_MODEL_ID=${REACT_APP_MODEL_ID}
+      - REACT_APP_TEMPERATURE=${REACT_APP_TEMPERATURE}
+      - REACT_APP_MAX_TOKENS=${REACT_APP_MAX_TOKENS}
+      - REACT_APP_ENABLE_STREAMING=${REACT_APP_ENABLE_STREAMING}
+    depends_on:
+      - bedrock-gateway
+    networks:
+      - bedrock-network
+
+  bedrock-gateway:
+    image: public.ecr.aws/aws-samples/bedrock-access-gateway:latest
+    ports:
+      - "3001:3001"
+    environment:
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - API_KEY=${API_KEY}
+    networks:
+      - bedrock-network
+
+networks:
+  bedrock-network:
+    driver: bridge 
