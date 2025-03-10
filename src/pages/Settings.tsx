@@ -89,11 +89,19 @@ const Settings: React.FC = () => {
   const handleChange = (field: keyof Settings) => (
     event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
   ) => {
-    const value = event.target.type === 'checkbox'
-      ? (event.target as HTMLInputElement).checked
-      : event.target.type === 'number'
-      ? Number(event.target.value)
-      : event.target.value;
+    let value: string | number | boolean;
+
+    if ('type' in event.target) {
+      // Handle HTMLInputElement events (text, number, checkbox)
+      value = event.target.type === 'checkbox'
+        ? (event.target as HTMLInputElement).checked
+        : event.target.type === 'number'
+        ? Number(event.target.value)
+        : event.target.value;
+    } else {
+      // Handle SelectChangeEvent
+      value = event.target.value;
+    }
 
     setSettings((prev) => ({
       ...prev,
